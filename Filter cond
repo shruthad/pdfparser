@@ -1,0 +1,94 @@
+import pandas as pd
+
+# Hard-coded final table values
+data = [
+    ["ADM100", 0.93, 0.888889, 8.0],
+    ["ADM150", 0.93, 1.000000, 1.0],
+    ["ADM160", 0.85, 0.775000, 93.0],
+    ["AUD200", 0.85, 0.876543, 71.0],
+    ["CFA140", 0.85, 0.776699, 80.0],
+    ["CFA320", 0.95, 1.000000, 3.0],
+    ["CFA340", 0.80, 0.818182, 18.0],
+    ["COR175", 0.85, 0.842105, 64.0],
+    ["CRM220", 0.50, 0.943396, 1980.0],
+    ["HUM420", 0.90, 0.872093, 75.0],
+    ["ISY100", 0.90, 0.775000, 217.0],
+    ["LEG320", 0.50, 0.780093, 337.0],
+    ["LEG460", 0.90, 0.801153, 278.0],
+    ["LNS115", 0.93, 0.801724, 93.0],
+    ["SAL240", 0.50, 0.930108, 173.0],
+    ["TAX100", 0.95, 0.792398, 542.0]
+]
+
+# Create DataFrame
+df = pd.DataFrame(data, columns=["RCC", "Threshold", "Precision", "CP"])
+
+# Calculate totals
+total_cp = df["CP"].sum()
+macro_avg_precision = df["Precision"].mean()
+
+# Display
+print("Filtered RCCs where precision first exceeds 0.77:\n")
+print(df.to_string(index=False))
+print(f"\nTotal CP: {total_cp}")
+print(f"Macro-averaged Precision: {macro_avg_precision:.4f}")k
+
+
+
+
+import pandas as pd
+
+# --------------------
+# 1. Hardcoded RCC, Threshold, Precision, CP
+# --------------------
+filtered_df = pd.DataFrame([
+    ['ADM100', 0.95, 1.000000, 1.0],
+    ['ADM160', 0.85, 0.854545, 47.0],
+    ['AUD200', 0.85, 0.888889, 32.0],
+    ['AUD300', 0.95, 0.772124, 349.0],
+    ['CFA140', 0.80, 0.781955, 104.0],
+    ['CFA340', 0.85, 0.875000, 7.0],
+    ['CFA400', 0.95, 0.833333, 5.0],
+    ['COR175', 0.85, 0.773616, 59.0],
+    ['CRM220', 0.40, 0.961071, 1975.0],
+    ['HUM420', 0.93, 0.842105, 64.0],
+    ['ISY100', 0.93, 0.890909, 98.0],
+    ['LEG320', 0.40, 0.810127, 384.0],
+    ['LEG460', 0.85, 0.772358, 380.0],
+    ['LNS115', 0.93, 0.820000, 82.0],
+    ['SAL240', 0.40, 0.849372, 203.0],
+    ['TAX100', 0.93, 0.788606, 526.0]
+], columns=['RCC', 'Threshold', 'Precision', 'CP'])
+
+# Sort alphabetically by RCC
+filtered_df = filtered_df.sort_values(by='RCC').reset_index(drop=True)
+
+# --------------------
+# 2. Filter original_df for RCC + Threshold matches
+# --------------------
+# Assumes original_df has columns 'RCC' and 'Threshold'
+merged_df = original_df.merge(
+    filtered_df[['RCC', 'Threshold']],
+    on=['RCC', 'Threshold'],
+    how='inner'
+)
+
+# --------------------
+# 3. Save filtered datapoints to Parquet
+# --------------------
+merged_df.to_parquet("filtered_rcc_threshold_data.parquet", index=False)
+
+# --------------------
+# 4. Summary metrics
+# --------------------
+total_cp = filtered_df['CP'].sum()
+macro_avg_precision = filtered_df['Precision'].mean()
+
+print("\nFiltered RCC summary:")
+print(filtered_df)
+
+print(f"\nTotal CP: {total_cp}")
+print(f"Macro-averaged Precision: {macro_avg_precision:.4f}")
+print(f"Saved {len(merged_df)} datapoints to filtered_rcc_threshold_data.parquet")
+
+
