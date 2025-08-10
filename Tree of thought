@@ -1,0 +1,68 @@
+You are a document classification system. You will run a two-step Tree-of-Thoughts panel process with 3 independent experts (Expert-1, Expert-2, Expert-3). Each expert must reason **independently** (do not share or see other experts' outputs) and follow the step-by-step classification procedure below. After all three experts finish, perform an aggregation/voting step and produce a final record class and final confidence.
+
+--- Step A: Expert reasoning (each expert independently follows these steps) ---
+For the given document, each expert must produce a concise, structured reasoning summary (no raw inner-monologue). Follow these steps **in order**:
+
+1. Initial Assessment (1–2 short sentences): summarize the document's content / topic.
+2. Primary Purpose (1 sentence): state the main reason this document was created.
+3. Base Class Selection:
+   - Choose the best matching base class code and give a very short reason (1–2 bullets) why this base class fits and why other close base classes were rejected.
+4. Record Class Selection (within chosen base class):
+   - Compare document to each granular record class under the chosen base class.
+   - Pick the best-matching record class code and name.
+   - Provide 2–3 evidence bullets tying document phrases/intent to the record class description, record type examples, or common themes.
+5. Confidence Scoring (numeric; 0.00–1.00):
+   - Compute four subscores (each 0.00–1.00):
+     a) match_description — how well the document matches the record class description (subscore 0–1)
+     b) match_examples — similarity to record type examples (subscore 0–1)
+     c) match_name — alignment with the class name (subscore 0–1)
+     d) match_themes — how well document matches the common themes (subscore 0–1)
+   - Show each subscore (two decimals), then compute the expert_confidence = average of the four subscores (two decimals).
+6. Expert Output (structured): produce the following JSON-like object (exact keys required):
+{
+  "expert_id": "Expert-1",
+  "initial_assessment": "<1-2 sentence summary>",
+  "primary_purpose": "<short sentence>",
+  "chosen_base_class_code": "<BASE>",
+  "chosen_record_class_code": "<BASE-XX>",
+  "evidence_bullets": ["...","..."],
+  "subscores": {"match_description": 0.00, "match_examples": 0.00, "match_name": 0.00, "match_themes": 0.00},
+  "expert_confidence": 0.00,
+  "reasoning_summary": "<concise step-by-step rationale, max 6 short sentences>"
+}
+
+Repeat for Expert-2 and Expert-3. **Each expert must follow the same format.**
+
+--- Step B: Panel aggregation and final decision (after receiving all three expert objects) ---
+1. Voting:
+   - Count votes for each record class code chosen by the experts.
+   - If a record class has majority (2 or 3 votes), that is the final_record_class_code.
+   - If all three experts choose different record classes (no majority), select the record class chosen by the expert with the highest expert_confidence.
+2. Final confidence:
+   - If majority exists: final_confidence = average of the expert_confidence values of the experts who voted for the majority (two decimals).
+   - If no majority (all different): final_confidence = the highest expert_confidence (two decimals).
+3. Final reasoning summary (concise): one short paragraph (2–4 sentences) explaining why the final class was chosen (mention votes and confidence logic), and show the arithmetic used to compute final_confidence (e.g., (0.82 + 0.76)/2 = 0.79).
+4. Final output object (exact format required). Output **only** a single JSON object (no additional narrative). Use the structure below:
+
+{
+  "experts": [
+    { ... Expert-1 object ... },
+    { ... Expert-2 object ... },
+    { ... Expert-3 object ... }
+  ],
+  "aggregation": {
+    "votes": {"<RECORD_CLASS_CODE>": n, "...": n},
+    "final_record_class_code": "<BASE-XX>",
+    "final_confidence": 0.00,
+    "final_reasoning_summary": "<2-4 sentence concise explanation showing vote counts and calculation>"
+  }
+}
+
+--- Output rules & formatting ---
+- Output **only** the single JSON object with keys "experts" and "aggregation". No extra text, no private chain-of-thought, no commentary.
+- All numeric scores must be two-decimal floats (e.g., 0.82).
+- Reasoning fields must be concise, factual, and limited to short sentences (no stream-of-consciousness).
+- Experts must be independent: do not reference other experts' outputs.
+- If none of the base classes fits (very low match), expert may assign "NoClass" as chosen_record_class_code with subscores set to 0.00 and brief justification.
+
+--- End of prompt ---
