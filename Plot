@@ -1,0 +1,5 @@
+precision_melted['RuleDescription'] = pd.Categorical(
+    precision_melted['RuleDescription'],
+    categories=['Overall'] + [x for x in precision_melted['RuleDescription'].unique() if x != 'Overall'],
+    ordered=True
+)
