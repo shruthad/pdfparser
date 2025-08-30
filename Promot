@@ -1,0 +1,12 @@
+{
+  "reason": "<Step by Step Chain of Thought Reasoning:
+  [Your analysis of document content]
+  [What is the document's primary purpose?]
+  [Who is the document's target audience?]
+  [Evaluate the document against each available base class, noting alignment or mismatches with purpose and audience]
+  [Select the most appropriate base class based on the evaluation]
+  [Comparison with record classes under the selected base class]
+  [Determine the most appropriate record class and explain why it is the best fit]
+  [Reasoning for the assigned confidence]>",
+  "Final Record Class Code": "<Record Class Code>"
+}
