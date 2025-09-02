@@ -1,0 +1,5 @@
+Just a quick update on the prompting work:
+As per Harsha’s suggestion, we modified the chain of thought so that the model first assesses all classes before selecting the most appropriate one. However, this change did not lead to any improvement in performance.
+After discussing with Yash, we’ve decided to add an additional verification step after the base class is selected.
+This week, we’ll also work on streamlining the entire prompting task into a single pipeline, since we currently have multiple versions of prompts floating around.
+I’ll set up a call this Friday so we can finalize this from our end. From next week onwards, we’ll just update the prompts with suggestions from Lisa.
