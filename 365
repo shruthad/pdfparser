@@ -1,0 +1,33 @@
+In our team, when we want to appreciate someone’s support, we usually do it verbally in monthly calls. While this is great in the moment, the recognition often gets forgotten soon after.
+Idea:
+Let’s make appreciation more structured, lasting, and motivating by introducing a “Peer Thanking App” built on Microsoft 365.
+At the start of every month, each team member gets 100 points.
+They can distribute these points among colleagues who helped them — but not themselves.
+Every allocation is logged, and a Power BI leaderboard shows the top appreciated colleagues.
+Impact:
+Encourages a culture of gratitude where everyone actively acknowledges each other’s efforts.
+Recognition becomes visible and measurable instead of being forgotten.
+Adds a fun gamification element — the top person(s) on the leaderboard can be rewarded with bonus recognition from the manager.
+Why this works:
+Built fully within M365 tools we already use (Power Apps, Power Automate, Power BI, SharePoint).
+No extra cost, minimal setup, and seamless integration with Teams.
+Scalable across teams, with dashboards to spot collaboration trends.
+In short:
+This app turns casual appreciation into actionable recognition — creating a more motivated, engaged, and collaborative team.
+Would you like me to also draft a catchy 1-liner tagline you can use in your presentation (e.g., something fun like “100 points of gratitude – who will be this month’s appreciation champion?”)?
+You said:
+
+Fill this as well
+ChatGPT said:
+Perfect — thanks for sharing the template 👍
+Let me fill it in with your Employee Thanking App (Peer Appreciation) idea so you can directly paste into your submission doc:
+Name	Idea description	Steps of execution	Tool(s) used	How is this idea reusable?
+Employee Thanking App – 100 Points of Gratitude	Build a peer recognition app where each employee gets 100 points monthly to distribute among colleagues who supported them. Points are tracked, and a leaderboard highlights the most appreciated team members. Managers can further recognize top performers.	1. Create two SharePoint lists: Employees and PointsTransactions.
+2. Build a Power Apps Canvas App for employees to allocate points (with rules: no self-allocation, total = 100).
+3. Use Power Automate to send monthly reminders and notify employees when they receive points.
+4. Create a Power BI dashboard to show leaderboards and trends.
+5. Embed the app and dashboard in Teams for easy access.	SharePoint, Power Apps, Power Automate, Power BI, Teams, M365 Copilot (for generating insights & summaries from data).	Can be reused across teams and departments as a standard peer recognition system. The same structure works for any function (sales, operations, tech) and can be scaled across the organization with minimal changes.
+✅ This version covers:
+Time Saved → replaces manual appreciation in calls/emails with automated reminders, tracking, and dashboards.
+Reusability → can be deployed to any team or department.
+Innovation → gamifies appreciation, integrates Copilot for insights (e.g., “Copilot, summarize who got the most cross-team recognition this quarter”).
