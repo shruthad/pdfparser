@@ -1,0 +1,70 @@
+Initial Assessment
+Analyze the document content in detail to extract its intent and subject matter.
+Primary Purpose
+What is the main reason this document was created? (e.g., inform customers, manage finances, regulatory compliance, etc.)
+Target Audience
+Who is the intended recipient? (e.g., customers, employees, regulators, auditors, etc.)
+Base Class Selection
+Compare the document’s primary purpose and target audience with all base class descriptions.
+Identify the base class that best aligns.
+Clearly explain why this base class was chosen and why others were not.
+Verification — Confirm Selected Base Class
+Produce top N candidate base classes (selected + runner-up).
+Score each candidate on: PurposeMatch, AudienceMatch, KeywordOverlap, ExampleTypeMatch, ThemeSimilarity.
+Compute a composite score for each candidate.
+Apply confirmation rules:
+• If margin >= 0.15 → Confirmed
+• If 0.05 <= margin < 0.15 → Tentative
+• If margin < 0.05 → Ambiguous
+Record Class Selection (Dynamic Scope)
+If verification = Confirmed → Look only under the confirmed base class.
+If verification = Tentative / Ambiguous → Look under both the selected base class and the runner-up.
+For each candidate record class in scope, compare the document against:
+• Record class name
+• Description
+• Common themes
+• Record type examples
+Identify the best-matching record class.
+Adjustment Rule for Tentative/Ambiguous:
+If Tentative, apply a −0.10 penalty to the final confidence score if the best record class comes from the runner-up base class.
+If Ambiguous, apply a −0.15 penalty to the final confidence score if the best record class comes from the runner-up base class.
+If multiple record classes are within 0.05 margin, output both top candidates with justification and flag for review.
+Confidence Score Assignment
+Assign a base confidence score (0.00–1.00) based on:
+• Alignment with record class name/description
+• Similarity to common themes and examples
+• Verification status adjustment:
+Confirmed → small boost (+0.05, capped at 1.00)
+Tentative → penalty (−0.10 if runner-up chosen)
+Ambiguous → penalty (−0.15 if runner-up chosen)
+Final Output
+Provide:
+Step-by-step reasoning trace
+Verification summary (with confirmation status)
+Final record class code
+Confidence score
+JSON Output Format (with Penalty Rule)
+{
+  "step_by_step_trace": [
+    "Initial Assessment: <summary>",
+    "Primary Purpose: <purpose>",
+    "Target Audience: <audience>",
+    "Base Class Selection: <selected base class and reason>",
+    "Verification: <scores, runner-up, confirmation status>",
+    "Record Class Selection: <scope used: confirmed-only OR confirmed+runner-up, reasoning>",
+    "Confidence Score Assignment: <score rationale including penalty/boost>"
+  ],
+  "verification": {
+    "selected_base_class": "<BaseClassCode>",
+    "runner_up": "<BaseClassCode>",
+    "composite_scores": {
+      "selected": 0.XX,
+      "runner_up": 0.XX
+    },
+    "margin": 0.XX,
+    "confirmation": "Confirmed | Tentative | Ambiguous",
+    "rationale": "<why confirmed/tentative/ambiguous>"
+  },
+  "final_record_class_code": "<RecordClassCode>",
+  "confidence_score": 0.00
+}
