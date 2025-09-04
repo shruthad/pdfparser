@@ -1,0 +1,60 @@
+Initial Assessment
+Analyze the document content in detail to extract its intent and subject matter.
+Primary Purpose
+What is the main reason this document was created? (e.g., inform customers, manage finances, regulatory reporting, etc.)
+Target Audience
+Who is the intended recipient? (e.g., customers, employees, regulators, vendors, internal audit, etc.)
+Base Class Selection
+Compare the document's primary purpose and target audience with all base class descriptions.
+Identify the base class that best aligns with both purpose and audience.
+Clearly explain why this base class was chosen and why the others were not (highlight key mismatches).
+Verification — Confirm Selected Base Class (NEW)
+Step 5.1 — Produce top N candidate base classes (selected + top 2 alternatives) with short alignment notes.
+Step 5.2 — Score each candidate on a small rubric (0.00–1.00):
+PurposeMatch, AudienceMatch, KeywordOverlap, ExampleTypeMatch, ThemeSimilarity.
+Step 5.3 — Compute a composite score for each candidate (default weights: Purpose 0.30, Audience 0.25, Keyword 0.20, ExampleType 0.15, Theme 0.10).
+Step 5.4 — Confirmation rules:
+• If SelectedScore − RunnerUpScore >= 0.15 → Confirm selected base class.
+• If 0.05 <= SelectedScore − RunnerUpScore < 0.15 → Tentatively confirm and include runner-up rationale.
+• If SelectedScore − RunnerUpScore < 0.05 → Ambiguous — return top 2 candidates with pros/cons and recommend human review.
+• If tie or the runner-up is more specific / better matches concrete examples, prefer the more specific class and document reason.
+Step 5.5 — Record verification summary: include numeric scores, the margin, confirmation flag, and short justification.
+Record Class Selection (Within Confirmed Base Class)
+For each granular record class under the chosen base class compare the document with: name, description, type examples, and common themes.
+Identify the best-matching granular record class and explain why (and why others were excluded).
+If none match, tag as "No matching record class — escalate/fallback".
+Confidence Score Assignment
+Assign a confidence score between 0.00 and 1.00 based on: alignment with class name, match to description, similarity to common themes, similarity to record type examples, and verification outcome.
+Adjustment rule: if verification was Confirmed, add a small positive boost (e.g., +0.05) capped at 1.0; if Ambiguous, reduce score (e.g., −0.10).
+Final Output
+Provide:
+Step-by-step reasoning trace (concise, structured trace explaining the steps above)
+Verification summary (scores + confirmation flag + rationale)
+Final record class code (granular)
+Confidence score (0.00–1.00)
+Suggested Output Format (JSON) — includes Verification block
+{
+  "step_by_step_trace": [
+    "Initial Assessment: <short summary of doc content>",
+    "Primary Purpose: <purpose>",
+    "Target Audience: <audience>",
+    "Base Class Selection: <selected base class and short reason>",
+    "Verification: <see verification block>",
+    "Record Class Selection: <selected record class and reason>",
+    "Confidence Score Assignment: <final score rationale>"
+  ],
+  "verification": {
+    "selected_base_class": "<BaseClassCode>",
+    "top_alternatives": [
+      {"base_class":"<BaseClassCode2>", "reason":"<short>", "composite_score":0.XX},
+      {"base_class":"<BaseClassCode3>", "reason":"<short>", "composite_score":0.XX}
+    ],
+    "composite_score_selected": 0.XX,
+    "composite_score_runner_up": 0.XX,
+    "score_margin": 0.XX,
+    "confirmation": "Confirmed | Tentative | Ambiguous",
+    "rationale": "<brief justification for confirmation or ambiguity>"
+  },
+  "final_record_class_code": "<RecordClassCode>",
+  "confidence_score": 0.00
+}
