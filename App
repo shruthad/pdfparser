@@ -1,0 +1,92 @@
+// Cache logged-in user and employees
+Set(varUserEmail, Lower(User().Email));
+Set(varUserDisplayName, User().FullName);
+ClearCollect(colEmployees, Filter(Employees, Active = true));
+ClearCollect(colAllocations, []); // temporary in-memory allocations
+2.
+Sort(
+  Filter(colEmployees, Lower(FullName.Email) <> Lower(varUserEmail)),
+  FullName.DisplayName,
+  Ascending
+)
+3.
+"Remaining: " & Text(100 - Sum(colAllocations, Points)) & " pts"
+4.
+If(
+  IsBlank(cmbRecipient.Selected) || IsBlank(txtPoints.Text),
+  Notify("Select a recipient and enter points.", NotificationType.Error),
+  If(
+    Value(txtPoints.Text) <= 0,
+    Notify("Points must be positive.", NotificationType.Error),
+    If(
+      Sum(colAllocations, Points) + Value(txtPoints.Text) > 100,
+      Notify("This will exceed your 100 points limit.", NotificationType.Error),
+      Collect(
+        colAllocations,
+        {
+          Id: GUID(),
+          ReceiverPerson: cmbRecipient.Selected.FullName, // People record
+          ReceiverDisplayName: cmbRecipient.Selected.FullName.DisplayName,
+          Points: Value(txtPoints.Text),
+          Note: txtNotes.Text
+        }
+      );
+      Reset(txtPoints);
+      Reset(txtNotes);
+      Notify("Added to review list.", NotificationType.Success)
+    )
+  )
+)
+5.
+
+Remove(colAllocations, ThisItem)
+6.
+"Total Allocated: " & Sum(colAllocations, Points) & " / 100"
+7.
+If(Sum(colAllocations, Points) = 0 || Sum(colAllocations, Points) > 100, DisplayMode.Disabled, DisplayMode.Edit)
+8.
+If(
+  Sum(colAllocations, Points) = 0,
+  Notify("Add at least one allocation before submitting.", NotificationType.Error),
+  If(
+    Sum(colAllocations, Points) > 100,
+    Notify("Total exceeds 100 points. Fix allocations.", NotificationType.Error),
+    ForAll(
+      colAllocations,
+      Patch(
+        PointsTransactions,
+        Defaults(PointsTransactions),
+        {
+          GiverName: {
+            '@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedUser",
+            Claims: "i:0#.f|membership|" & varUserEmail,
+            DisplayName: varUserDisplayName,
+            Email: varUserEmail
+          },
+          ReceiverName: ReceiverPerson, // stored People record
+          Points: Points,
+          Date: Today(),
+          Notes: Note,
+          Status: "Submitted"
+        }
+      )
+    );
+    Clear(colAllocations);
+    Notify("Submitted successfully! 🎉", NotificationType.Success);
+    Navigate(Screen_Home, Fade)
+  )
+)
+9.
+SortByColumns(
+  Filter(
+    PointsTransactions,
+    Lower(GiverName.Email) = Lower(varUserEmail) || Lower(ReceiverName.Email) = Lower(varUserEmail)
+  ),
+  "Date",
+  Descending
+)
+10.
+
+
+
+
