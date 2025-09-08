@@ -1,0 +1,41 @@
+1.// cache current user and employees for faster UI
+Set(varUserEmail, Lower(User().Email));
+Set(varUserDisplayName, User().FullName);
+ClearCollect(colEmployees, Filter(Employees, Active = true)); // cache active employees
+ClearCollect(colAllocations, []); // temporary in-memory allocations
+Set(varCurrentMonth, Month(Today()));
+Set(varCurrentYear, Year(Today()));
+2."Welcome, " & varUserDisplayName
+3.Navigate(Screen_Allocate, ScreenTransition.Fade)
+4.Navigate(Screen_History, ScreenTransition.Fade)
+5.SortByColumns(
+  Filter(colEmployees, Lower(FullName.Email) <> varUserEmail),
+  "FullName.DisplayName",
+  Ascending
+)
+6."Remaining: " & Text(100 - Sum(colAllocations, Points)) & " pts"
+7.If(
+  IsBlank(cmbRecipient.Selected) || IsBlank(txtPoints.Text),
+  Notify("Select a recipient and enter points.", NotificationType.Error),
+  If(
+    Value(txtPoints.Text) <= 0,
+    Notify("Points must be positive.", NotificationType.Error),
+    If(
+      Sum(colAllocations, Points) + Value(txtPoints.Text) > 100,
+      Notify("This will exceed your 100 point limit.", NotificationType.Error),
+      Collect(
+        colAllocations,
+        {
+          Id: GUID(),
+          ReceiverPerson: cmbRecipient.Selected.FullName,               // People record
+          ReceiverDisplayName: cmbRecipient.Selected.FullName.DisplayName,
+          Points: Value(txtPoints.Text),
+          Note: txtNotes.Text
+        }
+      );
+      Reset(txtPoints);
+      Reset(txtNotes);
+      Notify("Added to review list.", NotificationType.Success)
+    )
+  )
+)
