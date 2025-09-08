@@ -1,0 +1,112 @@
+1.SortByColumns(
+  Filter(colEmployees, Lower(FullName.Email) <> varUserEmail),
+  "FullName.DisplayName",
+  Ascending
+)
+2."Remaining: " & Text(100 - Sum(colAllocations, Points)) & " pts"
+3.If(
+  IsBlank(cmbRecipient.Selected) || Value(txtPoints.Text) <= 0 || Sum(colAllocations, Points) + Value(txtPoints.Text) > 100,
+  DisplayMode.Disabled,
+  DisplayMode.Edit
+)
+4.// Add button: validate, then either Collect or Update existing entry
+Set(varNewPts, Value(txtPoints.Text));
+If(
+  IsBlank(cmbRecipient.Selected) || varNewPts <= 0,
+  Notify("Select a recipient and enter a positive points value.", NotificationType.Error),
+  If(
+    Sum(colAllocations, Points) + varNewPts > 100,
+    Notify("This will exceed your 100 points limit.", NotificationType.Error),
+    // If recipient not in collection, add; otherwise update (merge points)
+    If(
+      IsBlank(
+        LookUp(
+          colAllocations,
+          Lower(ReceiverPerson.Email) = Lower(cmbRecipient.Selected.FullName.Email)
+        )
+      ),
+      Collect(
+        colAllocations,
+        {
+          Id: GUID(),
+          ReceiverPerson: cmbRecipient.Selected.FullName, 
+          ReceiverDisplayName: cmbRecipient.Selected.FullName.DisplayName,
+          Points: varNewPts,
+          Note: txtNotes.Text
+        }
+      ),
+      // else update existing entry
+      UpdateIf(
+        colAllocations,
+        Lower(ReceiverPerson.Email) = Lower(cmbRecipient.Selected.FullName.Email),
+        {
+          Points: LookUp(colAllocations, Lower(ReceiverPerson.Email) = Lower(cmbRecipient.Selected.FullName.Email)).Points + varNewPts,
+          Note: Concatenate(LookUp(colAllocations, Lower(ReceiverPerson.Email) = Lower(cmbRecipient.Selected.FullName.Email)).Note, If(IsBlank(txtNotes.Text), "", "; " & txtNotes.Text))
+        }
+      )
+    );
+    // reset inputs and notify
+    Reset(txtPoints);
+    Reset(txtNotes);
+    Notify("Added to review list.", NotificationType.Success)
+  )
+)
+5.Remove(colAllocations, ThisItem)
+6.// populate editor fields for edit
+Set(varEditingId, ThisItem.Id);
+Set(txtPoints_EditingValue, ThisItem.Points); // optional: use variables to hold edit values
+Set(txtNotes_EditingValue, ThisItem.Note);
+Set(cmbRecipient_Editing, ThisItem.ReceiverPerson);
+7.// simple load into inputs for user to change and re-add (we'll delete original)
+Set(varEditingId, ThisItem.Id);
+UpdateContext({editReceiver: ThisItem.ReceiverPerson, editPoints: ThisItem.Points, editNote: ThisItem.Note});
+ResetForm(...) // not needed if using Input controls
+// fill controls:
+If(editReceiver <> Blank(), 
+  // set combo box default
+  // Power Apps: set cmbRecipient.DefaultSelectedItems to [editReceiver]
+);
+8.Navigate(Screen_Review, ScreenTransition.Fade)
+
+9.Set(varRemaining, 100 - Sum(colAllocations, Points));
+If(
+  varRemaining <= 0,
+  Notify("No remaining points.", NotificationType.Warning),
+  // simulate adding varRemaining points using same merge logic as Add button (copy/paste logic but replace varNewPts)
+  // you can reuse the same UpdateIf/Collect block with varNewPts = varRemaining
+)
+11.If(
+  CountRows(colAllocations) = 0,
+  Notify("No allocations to submit.", NotificationType.Error),
+  // Submit all allocations to SharePoint
+  ForAll(
+    colAllocations,
+    Patch(
+      PointsTransactions,
+      Defaults(PointsTransactions),
+      {
+        GiverName: {
+          '@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedUser",
+          Claims: "i:0#.f|membership|" & varUserEmail,
+          DisplayName: varUserDisplayName,
+          Email: varUserEmail
+        },
+        ReceiverName: {
+          '@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedUser",
+          Claims: "i:0#.f|membership|" & ThisRecord.ReceiverPerson.Email,
+          DisplayName: ThisRecord.ReceiverDisplayName,
+          Email: ThisRecord.ReceiverPerson.Email
+        },
+        Points: ThisRecord.Points,
+        Date: Today(),
+        Notes: ThisRecord.Note,
+        Status: "Submitted"
+      }
+    )
+  );
+  // clear local allocations and return home
+  Clear(colAllocations);
+  Notify("Submitted! Thank you for appreciating your teammates 🎉", NotificationType.Success);
+  Navigate(Screen_Home, ScreenTransition.Fade)
+)
+
