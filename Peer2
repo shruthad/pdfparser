@@ -1,0 +1,47 @@
+"Points Given: " &
+Text(
+  Coalesce(
+    Sum(
+      Filter(
+        PointsTransactions,
+        Lower(GiverName.Email) = 
+
+
+
+
+
+
+1.
+"Points Given: " &
+Text(
+  Coalesce(
+    Sum(
+      Filter(
+        PointsTransactions,
+        Lower(GiverName.Email) = varUserEmail &&
+        Month(Date) = varCurrentMonth &&
+        Year(Date) = varCurrentYear
+      ),
+      Points
+    ),
+    0
+  )
+)
+
+
+
+2."Points Received: " &
+Text(
+  Coalesce(
+    Sum(
+      Filter(
+        PointsTransactions,
+        Lower(ReceiverName.Email) = varUserEmail &&
+        Month(Date) = varCurrentMonth &&
+        Year(Date) = varCurrentYear
+      ),
+      Points
+    ),
+    0
+  )
+)
