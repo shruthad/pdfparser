@@ -1,0 +1,23 @@
+// Capture current user info
+Set(varUserEmail, Lower(User().Email));
+Set(varUserDisplayName, User().FullName);
+
+// Build Employees collection with structured FullName (record)
+ClearCollect(
+    colEmployees,
+    AddColumns(
+        Filter(Employees, Active = true),
+        "FullNameRec",
+        {
+            DisplayName: FullName,
+            Email: Lower(FullName) & "@yourdomain.com"   // adjust domain if needed
+        }
+    )
+);
+
+// Temporary in-memory allocations
+ClearCollect(colAllocations, []);
+
+// Current month/year
+Set(varCurrentMonth, Month(Today()));
+Set(varCurrentYear, Year(Today()));
