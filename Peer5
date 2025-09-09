@@ -1,0 +1,49 @@
+If(
+  CountRows(colAllocations) = 0,
+  Notify("No allocations to submit.", NotificationType.Error),
+
+  // Submit all allocations
+  ForAll(
+    colAllocations,
+    With(
+      {
+        // compute a usable email for receiver:
+        recEmail: If(
+          !IsBlank(ReceiverEmail),                                      // explicit text field
+          ReceiverEmail,
+          !IsBlank(ReceiverPerson) && !IsBlank(ReceiverPerson.Email),   // People record
+            ReceiverPerson.Email,
+          ReceiverDisplayName                                         // fallback: display name (may not be email)
+        )
+      },
+
+      Patch(
+        PointsTransactions,
+        Defaults(PointsTransactions),
+        {
+          GiverName: {
+            '@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedUser",
+            Claims: "i:0#.f|membership|" & varUserEmail,
+            DisplayName: varUserDisplayName,
+            Email: varUserEmail
+          },
+          ReceiverName: {
+            '@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedUser",
+            Claims: "i:0#.f|membership|" & recEmail,
+            DisplayName: ReceiverDisplayName,
+            Email: recEmail
+          },
+          Points: Points,
+          Date: Today(),
+          Notes: Note,
+          Status: "Submitted"
+        }
+      )
+    )
+  );
+
+  // tidy up
+  Clear(colAllocations);
+  Notify("Submitted! Thank you for appreciating your teammates 🎉", NotificationType.Success);
+  Navigate(Screen_Home, ScreenTransition.Fade)
+)
