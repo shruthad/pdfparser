@@ -1,0 +1,109 @@
+Distinct(
+    AddColumns(
+        PointsTransactions,
+        "MonthName",
+        Text(Date, "mmmm yyyy")
+    ),
+    MonthName
+)
+
+LookUp(
+    Distinct(
+        AddColumns(PointsTransactions, "MonthName", Text(Date, "mmmm yyyy")),
+        MonthName
+    ),
+    MonthName = Text(Today(), "mmmm yyyy")
+)
+
+SortByColumns(
+    Filter(
+        AddColumns(
+            GroupBy(
+                Filter(
+                    PointsTransactions,
+                    Text(Date, "mmmm yyyy") = ddMonth.Selected.Result
+                ),
+                "ReceiverName",
+                "UserRecords"
+            ),
+            "TotalPoints",
+            Sum(UserRecords, Points)
+        ),
+        TotalPoints > 0
+    ),
+    "TotalPoints",
+    Descending
+)
+
+FirstN(
+    SortByColumns(
+        Filter(
+            AddColumns(
+                GroupBy(
+                    Filter(
+                        PointsTransactions,
+                        Text(Date, "mmmm yyyy") = ddMonth.Selected.Result
+                    ),
+                    "ReceiverName",
+                    "UserRecords"
+                ),
+                "TotalPoints",
+                Sum(UserRecords, Points)
+            ),
+            TotalPoints > 0
+        ),
+        "TotalPoints",
+        Descending
+    ),
+    5
+)
+
+If(
+    tglShowAll.Value,
+    // Show all
+    SortByColumns(
+        Filter(
+            AddColumns(
+                GroupBy(
+                    Filter(
+                        PointsTransactions,
+                        Text(Date, "mmmm yyyy") = ddMonth.Selected.Result
+                    ),
+                    "ReceiverName",
+                    "UserRecords"
+                ),
+                "TotalPoints",
+                Sum(UserRecords, Points)
+            ),
+            TotalPoints > 0
+        ),
+        "TotalPoints",
+        Descending
+    ),
+    // Show only Top 5
+    FirstN(
+        SortByColumns(
+            Filter(
+                AddColumns(
+                    GroupBy(
+                        Filter(
+                            PointsTransactions,
+                            Text(Date, "mmmm yyyy") = ddMonth.Selected.Result
+                        ),
+                        "ReceiverName",
+                        "UserRecords"
+                    ),
+                    "TotalPoints",
+                    Sum(UserRecords, Points)
+                ),
+                TotalPoints > 0
+            ),
+            "TotalPoints",
+            Descending
+        ),
+        5
+    )
+)
+
+
+
