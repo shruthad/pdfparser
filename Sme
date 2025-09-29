@@ -1,0 +1,13 @@
+Performance Evaluation
+Assess performance results for Batch 8 and Batch 9.
+Annotation Quality Review
+Identify and document annotation issues.
+Conduct a high-level comparison: Model predictions vs. Annotation vs. LLM outputs.
+Perform false positive analysis on 2–3 high-confidence data points.
+Confidence Thresholding
+Prepare a table of confidence thresholds to determine criteria for selecting Batch 9 annotation data.
+Rare Classes Identification
+Identify rare classes within the dataset.
+Explore how prompting techniques can be leveraged to obtain more datapoints for these rare classes.
+Data Selection Strategy
+Define the strategy for Batch 11 data selection, incorporating learnings from previous batches.
