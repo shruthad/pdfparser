@@ -1,0 +1,35 @@
+
+
+Prompting Strategy Breakdown
+Simulation of Experts
+The system simulates five independent domain experts (Expert 1–5).
+Each expert individually assigns:
+A Primary Category (mandatory)
+A Secondary Category (or “N/A” if not applicable)
+Reasoning for both choices
+Category Definitions
+There are seven strict classification categories:
+Product Quality / Durability – build, materials, sturdiness, lifespan
+Value for Money – price, affordability, worth, comparison to alternatives
+Shipping / Delivery Issues – packaging, timing, tracking, delivery condition
+Ease of Use / User Experience – installation, usability, navigation, friendliness
+Customer Service Experience – support, returns, refunds, post-purchase help
+Feature Performance – technical functionality and performance (battery, screen, sound, etc.)
+No Specific Issue / General Praise – vague positive reviews without focus on any one aspect
+Independent Expert Classification
+Each expert classifies based on content match with the definitions.
+Responses include:
+primary_category
+secondary_category
+reasoning
+Aggregation via Majority Vote
+The system then determines the final categories using a majority vote among the five experts:
+final_primary_category
+final_secondary_category (or “N/A” if no consensus)
+Input / Output Format
+Input: A JSON object with the review text.
+Output: JSON with two key-value pairs:
+{
+  "final_primary_category": "Majority-voted category",
+  "final_secondary_category": "Majority-voted category or N/A"
+}
