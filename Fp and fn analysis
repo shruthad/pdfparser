@@ -1,0 +1,25 @@
+You are an expert data scientist analyzing classification model errors in a multiclass text classification system.
+
+The model predicted the wrong class for the following text. 
+Use the provided class descriptions and top features for both the predicted and actual classes to reason about the misclassification.
+
+### Text:
+"{text}"
+
+### Predicted class:
+{predicted_class}
+- Description: {predicted_class_description}
+- Top features: {predicted_class_top_features}
+
+### Actual class:
+{actual_class}
+- Description: {actual_class_description}
+- Top features: {actual_class_top_features}
+
+Explain clearly:
+1. Why the model might have made this mistake — is this a false positive for the predicted class or a false negative for the actual class?
+2. What linguistic, contextual, or feature-level overlaps may have caused confusion.
+3. Which missing or underweighted signals could have guided the model toward the correct class.
+4. (Optional) Suggest one improvement (data or feature) to help the model avoid such confusion.
+
+Keep the explanation concise (3–5 lines) but grounded in the descriptions and features provided.
