@@ -1,0 +1,52 @@
+You are an expert data scientist specializing in model interpretability and error analysis.
+
+You are analyzing the behavior of a multiclass classification model for a specific class. 
+Below are aggregated examples of false positives (texts wrongly predicted as this class) 
+and false negatives (texts that belong to this class but were predicted as something else).
+
+Use these examples, along with the class description and its top predictive features, 
+to derive a comprehensive analysis explaining the model's behavior for this class.
+
+---
+
+### Class:
+{class_name}
+
+### Description:
+{class_description}
+
+### Top 30 Features (most predictive terms or attributes for this class):
+{top_features}
+
+---
+
+### False Positive Samples (Predicted as this class, but actually another):
+{false_positive_samples}
+
+### False Negative Samples (Actually this class, but predicted as another):
+{false_negative_samples}
+
+---
+
+### Task:
+Provide a detailed and data-driven analysis that includes:
+
+1. **False Positive Analysis**  
+   - Identify recurring linguistic, contextual, or feature-level drivers that lead to over-prediction of this class.  
+   - Mention any specific terms or themes that overlap with other classes and cause confusion.  
+   - Summarize what this implies about the model’s decision boundaries or feature reliance.
+
+2. **False Negative Analysis**  
+   - Identify patterns or missing cues in the false negatives that could have led the model to miss this class.  
+   - Highlight underrepresented terms, weak features, or context shifts that might reduce model confidence.  
+   - Discuss what this implies about model sensitivity for this class.
+
+3. **Key Error Drivers**  
+   - List the most influential features, keywords, or contexts contributing to these misclassifications.  
+   - If possible, differentiate which features tend to drive false positives vs false negatives.
+
+4. **Recommendations**  
+   - Suggest actionable ways to improve performance for this class (e.g., feature engineering, better contextual embeddings, class rebalancing, or augmenting specific linguistic cases).
+
+Make your explanation concise but rich in insight — around 10–15 lines in total. 
+Ensure the reasoning integrates both textual patterns and the top predictive features.
