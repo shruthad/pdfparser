@@ -1,0 +1,20 @@
+You are an expert data scientist analyzing classification model errors.
+
+### Text:
+"My payment went through, but I haven’t received my refund yet."
+
+### Predicted class:
+Payment Failure
+- Description: Issues where payments fail due to gateway or transaction errors.
+- Top features: ["transaction failed", "gateway timeout", "card declined", "error processing payment"]
+
+### Actual class:
+Refund Request
+- Description: Customer complaints where refunds are delayed or not received.
+- Top features: ["refund", "money not received", "return", "credit to account", "processing delay"]
+
+**Analysis:**
+The model likely predicted “Payment Failure” because of the phrase “payment went through,” matching strong payment-related keywords.  
+However, the context (“haven’t received my refund”) signals a post-payment issue tied to refunds.  
+This confusion arises from overlapping vocabulary (“payment,” “failed,” “money”).  
+Improving context-aware embeddings or training with more refund-related samples mentioning “payment” can reduce such errors.
