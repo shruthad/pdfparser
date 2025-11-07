@@ -1,0 +1,6 @@
+After discussing with Arjun, we followed the steps mentioned in the Confluence page to obtain the break glass/access.
+We have completed Step 2 successfully.
+In Step 3, we were not able to open the provided link.
+For Step 4, we raised an ART request as per the given instructions (which was for the QAEnt domain) and have completed this step — we received the RUID for QAEnt.
+As Sudhakar mentioned that the access is required for ADEnt, please confirm if we need to follow the same Step 4 instructions but raise the request for the ADEnt domain instead.
+Regarding your second point, I have Python 3.12.8 installed on my system. If development and deployment to the TCOO environment can be done without break glass access, we can proceed accordingly.
