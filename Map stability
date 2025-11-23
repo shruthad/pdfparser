@@ -1,0 +1,100 @@
+import pandas as pd
+import numpy as np
+from sklearn.metrics import average_precision_score
+import matplotlib.pyplot as plt
+
+##############################################################
+# CONFIGURATION
+##############################################################
+
+thresholds = [0.3,0.4,0.5,0.6,0.7,0.8,0.9]
+
+# Replace with your actual list of 37 classes (string names)
+classes = ["Class1","Class2","Class3"]  # <--- UPDATE THIS
+
+datasets = {
+    "Train": df_train,
+    "Validation": df_val,
+    "Holdout": df_holdout,
+    "Batch8": df_batch8
+}
+
+##############################################################
+# 1. MAP CALCULATION
+##############################################################
+
+def compute_map(df):
+    ap_scores = []
+    for c in classes:
+        y_true = (df["true_label"] == c).astype(int)
+        y_score = df[f"conf_{c}"]  # confidence column name pattern
+        ap_scores.append(average_precision_score(y_true, y_score))
+    return np.mean(ap_scores)
+
+map_results = {name: compute_map(df) for name, df in datasets.items()}
+
+map_table = pd.DataFrame.from_dict(map_results, orient="index", columns=["MAP"])
+map_table.loc["Std Dev"] = map_table["MAP"].std()
+print("\n===== MAP Stability Table =====")
+print(map_table)
+
+##############################################################
+# 2. PER-CLASS PRECISION AT MULTIPLE THRESHOLDS
+##############################################################
+
+def precision_per_class(df, threshold):
+    result = {}
+    df_t = df[df["confidence"] >= threshold]  # uses predicted confidence score column
+
+    for c in classes:
+        tp = sum((df_t["pred_label"] == c) & (df_t["true_label"] == c))
+        fp = sum((df_t["pred_label"] == c) & (df_t["true_label"] != c))
+        result[c] = tp / (tp + fp + 1e-9)
+    return result
+
+precision_results = {}
+
+for dataset_name, df in datasets.items():
+    precision_results[dataset_name] = {}
+    for t in thresholds:
+        precision_results[dataset_name][t] = precision_per_class(df, t)
+
+# Example precision table printout
+print("\n===== Precision Table Example (Train) =====")
+print(pd.DataFrame(precision_results["Train"]).T)
+
+##############################################################
+# 3. PRECISION–THRESHOLD CURVES PER CLASS
+##############################################################
+
+for c in classes[:5]:  # change [:5] to [:len(classes)] to print all
+    plt.figure(figsize=(6,4))
+    for dataset_name in datasets:
+        ys = [precision_results[dataset_name][t][c] for t in thresholds]
+        plt.plot(thresholds, ys, marker='o', label=dataset_name)
+    plt.title(f"Precision vs Threshold for {c}")
+    plt.xlabel("Confidence Threshold")
+    plt.ylabel("Precision")
+    plt.legend()
+    plt.grid()
+    plt.show()
+
+##############################################################
+# OPTIONAL: MAP STABILITY LINE PLOT
+##############################################################
+
+plt.figure(figsize=(6,4))
+plt.plot(list(map_results.keys()), list(map_results.values()), marker='o')
+plt.title("MAP Stability Across Datasets")
+plt.ylabel("MAP")
+plt.xlabel("Dataset")
+plt.grid()
+plt.show()
+
+##############################################################
+# OPTIONAL: PRINT COMPLETE PRECISION RESULTS PER DATASET
+##############################################################
+
+for dataset_name in precision_results:
+    print(f"\n======= Full Precision Table: {dataset_name} =======")
+    print(pd.DataFrame(precision_results[dataset_name]).T)
