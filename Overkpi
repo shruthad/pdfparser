@@ -1,0 +1,1 @@
+Degree of Overretention – a single overall number that shows how much the model is over-predicting retention, calculated by taking the total extra retention across all documents and dividing it by the total number of predictions.
