@@ -1,0 +1,9 @@
+I wanted to reach out for some clarification and to get your input on the overretention calculation KPIs we are working on.
+We have currently defined two metrics:
+Total Overretention Rate – the proportion of overretained documents relative to the total number of documents.
+Degree of Overretention – the amount by which each class exceeds its retention requirement, divided by the total number of predictions.
+Both of these metrics apply only to classes with finite retention periods. For classes with infinite retention, we are evaluating two possible approaches:
+Option 1: Compute overretention and the degree of overretention only for finite-retention classes and track infinite-retention classes separately.
+Option 2: Assign infinite-retention classes a large proxy value (e.g., the maximum retention period) and include them in the standard calculations.
+Additionally, would it be useful to compute underretention metrics as well, so we have a more complete assessment of prediction quality?
+Could you please share your thoughts or preferences on these options?
