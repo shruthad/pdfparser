@@ -1,0 +1,3 @@
+I also wanted to check with you regarding the expected input/output format for the monitoring code. At the moment, we have implemented the output in KAON format, and I’ve included an example below for your reference.
+Could you please confirm whether this is the format you expect, or if there is a preferred structure we should follow?
+Any guidance on the exact I/O specifications would be helpful so we can ensure full alignment.
